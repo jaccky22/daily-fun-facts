@@ -68,7 +68,7 @@
         .generate-btn:hover, .submit-btn:hover {
             background: #e64a19;
         }
-        .reactions {
+        .reactions, .social-share {
             margin-top: 15px;
         }
         .fact-input {
@@ -78,6 +78,13 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+        .social-share button {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -86,11 +93,20 @@
         <h2>Learn something new every day!</h2>
         <p id="funFact">Loading...</p>
         <button class="generate-btn" onclick="fetchFunFact()">Generate New Fact</button>
-        <div class="reactions" id="reactions-container"></div>
+        <div class="reactions" id="reactions-container">
+            <button onclick="react('like')">👍 Like (<span id="likeCount">0</span>)</button>
+            <button onclick="react('love')">❤️ Love (<span id="loveCount">0</span>)</button>
+            <button onclick="react('wow')">😲 Wow (<span id="wowCount">0</span>)</button>
+        </div>
         <div class="submit-container">
             <input type="text" id="userFact" class="fact-input" placeholder="Submit your own fun fact...">
             <button class="submit-btn" onclick="submitFact()">Submit</button>
             <p id="submitMessage" class="submit-message" style="display:none;">Thank you for submitting your fun fact!</p>
+        </div>
+        <div class="social-share">
+            <button onclick="shareOnFacebook()">📘 Share on Facebook</button>
+            <button onclick="shareOnTwitter()">🐦 Share on Twitter</button>
+            <button onclick="shareOnWhatsApp()">📱 Share on WhatsApp</button>
         </div>
     </div>
     <script>
@@ -100,12 +116,26 @@
             "Bananas are berries, but strawberries aren't! Botanically, a berry must contain seeds and pulp and come from a single flower with one ovary.",
             "A day on Venus is longer than a year on Venus! Venus rotates on its axis slower than it orbits the sun."
         ];
+        let reactions = { like: 0, love: 0, wow: 0 };
         function fetchFunFact() {
             const randomIndex = Math.floor(Math.random() * funFacts.length);
             document.getElementById("funFact").innerText = funFacts[randomIndex];
         }
         function submitFact() {
             document.getElementById("submitMessage").style.display = "block";
+        }
+        function react(type) {
+            reactions[type]++;
+            document.getElementById(`${type}Count`).innerText = reactions[type];
+        }
+        function shareOnFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+        }
+        function shareOnTwitter() {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(document.getElementById("funFact").innerText)}`, '_blank');
+        }
+        function shareOnWhatsApp() {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(document.getElementById("funFact").innerText)}`, '_blank');
         }
         window.onload = fetchFunFact;
     </script>
