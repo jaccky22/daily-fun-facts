@@ -1,18 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5760370419762495"
-     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5760370419762495" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Fun Facts | Interesting Trivia & Cool Facts</title>
-    <meta name="description" content="Discover fascinating daily fun facts, mind-blowing trivia, and interesting knowledge about science, history, animals, space, and more! Explore weird, funny, and unbelievable facts that will surprise and entertain you every day. Stay curious and learn something new with our amazing collection of facts, Discover amazing daily fun facts, interesting trivia, and mind-blowing facts that will surprise you every day!">
-    <meta name="keywords" content="fun facts, daily fun facts, interesting trivia, cool facts, random facts, amazing facts, weird facts, mind-blowing facts, science facts, history facts, animal facts, space facts, unbelievable facts, fun trivia, general knowledge facts, educational facts, did you know facts, fascinating trivia, shocking facts, little-known facts, viral facts, funny facts, smart facts, unique facts, curious facts, trending trivia, must-know facts, awesome fun facts, entertaining facts, true facts, knowledge boosters">
+    <meta name="description" content="Discover fascinating daily fun facts, mind-blowing trivia, and interesting knowledge about science, history, animals, space, and more!">
+    <meta name="keywords" content="fun facts, daily fun facts, interesting trivia, cool facts">
     <meta name="author" content="Daily Fun Facts & Interesting Trivia">
-    <meta property="og:title" content="Daily Fun Facts | Interesting Trivia & Cool Facts">
-    <meta property="og:description" content="Explore fascinating daily fun facts and trivia to learn something new every day.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://dailyfunfact.netlify.app/">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -23,10 +18,27 @@
             animation: fadeIn 1s ease-in;
             overflow-x: hidden;
         }
+
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            pointer-events: none;
+            user-select: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
         .fact-container {
             background: white;
             padding: 30px;
@@ -35,16 +47,22 @@
             max-width: 90%;
             margin: 50px auto;
             color: black;
+            position: relative;
+            z-index: 1;
+            border: 3px solid #ff5722; /* Added orange border */
         }
+
         h1 {
             font-size: 28px;
             margin-bottom: 20px;
             color: #444;
         }
+
         h2 {
             font-size: 24px;
             color: #555;
         }
+
         p {
             font-size: 20px;
             font-weight: bold;
@@ -55,6 +73,7 @@
             display: inline-block;
             background: white;
         }
+
         .generate-btn, .submit-btn {
             background: #ff5722;
             color: white;
@@ -63,14 +82,14 @@
             font-size: 18px;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 20px;
+            margin: 10px; /* Added spacing */
         }
-        .generate-btn:hover, .submit-btn:hover {
-            background: #e64a19;
+
+        .reactions button {
+            margin: 0 15px; /* Horizontal spacing between reaction buttons */
+            padding: 8px 15px;
         }
-        .reactions, .social-share {
-            margin-top: 15px;
-        }
+
         .fact-input {
             width: 90%;
             padding: 10px;
@@ -78,37 +97,50 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
-        .social-share button {
-            margin: 5px;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
+
+        .social-share {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Space between social buttons */
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .submit-message {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="fact-container">
         <h1>🤯 Daily Fun Facts & Interesting Trivia 🤯</h1>
+        <div id="visitorCount" style="color: #666; margin: 10px 0;"></div>
         <h2>Learn something new every day!</h2>
         <p id="funFact">Loading...</p>
+        
         <button class="generate-btn" onclick="fetchFunFact()">Generate New Fact</button>
+        
         <div class="reactions" id="reactions-container">
             <button onclick="react('like')">👍 Like (<span id="likeCount">0</span>)</button>
             <button onclick="react('love')">❤️ Love (<span id="loveCount">0</span>)</button>
             <button onclick="react('wow')">😲 Wow (<span id="wowCount">0</span>)</button>
         </div>
+        
         <div class="submit-container">
             <input type="text" id="userFact" class="fact-input" placeholder="Submit your own fun fact...">
             <button class="submit-btn" onclick="submitFact()">Submit</button>
             <p id="submitMessage" class="submit-message" style="display:none;">Thank you for submitting your fun fact!</p>
         </div>
+        
         <div class="social-share">
             <button onclick="shareOnFacebook()">📘 Share on Facebook</button>
             <button onclick="shareOnTwitter()">🐦 Share on Twitter</button>
             <button onclick="shareOnWhatsApp()">📱 Share on WhatsApp</button>
         </div>
     </div>
+
     <script>
         const funFacts = [
             "Honey never spoils! Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly edible.",
@@ -116,46 +148,65 @@
             "Bananas are berries, but strawberries aren't! Botanically, a berry must contain seeds and pulp and come from a single flower with one ovary.",
             "A day on Venus is longer than a year on Venus! Venus rotates on its axis slower than it orbits the sun."
         ];
+
         let reactions = { like: 0, love: 0, wow: 0 };
+
         function fetchFunFact() {
             const randomIndex = Math.floor(Math.random() * funFacts.length);
             document.getElementById("funFact").innerText = funFacts[randomIndex];
         }
+
         function submitFact() {
-            document.getElementById("submitMessage").style.display = "block";
+            const userFact = document.getElementById("userFact").value.trim();
+            if (userFact) {
+                funFacts.push(userFact);
+                document.getElementById("userFact").value = "";
+                const message = document.getElementById("submitMessage");
+                message.style.display = "block";
+                setTimeout(() => message.style.display = "none", 3000);
+            }
         }
+
         function react(type) {
             reactions[type]++;
             document.getElementById(`${type}Count`).innerText = reactions[type];
         }
+
         function shareOnFacebook() {
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
         }
+
         function shareOnTwitter() {
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(document.getElementById("funFact").innerText)}`, '_blank');
         }
+
         function shareOnWhatsApp() {
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(document.getElementById("funFact").innerText)}`, '_blank');
         }
+
         function updateVisitorCount() {
             let count = localStorage.getItem("visitorCount") || 0;
             count = parseInt(count) + 1;
             localStorage.setItem("visitorCount", count);
-            document.getElementById("visitorCount").innerText = "Visitors: " + count;
+            document.getElementById("visitorCount").innerText = "👥 Total Visitors: " + count;
         }
+
         function createSnowflake() {
             const snowflake = document.createElement("div");
             snowflake.classList.add("snowflake");
+            snowflake.innerHTML = "❄";
             snowflake.style.left = Math.random() * 100 + "vw";
             snowflake.style.animationDuration = Math.random() * 3 + 2 + "s";
+            snowflake.style.fontSize = Math.random() * 10 + 10 + "px";
             document.body.appendChild(snowflake);
-            setTimeout(() => { snowflake.remove(); }, 5000);
+            setTimeout(() => snowflake.remove(), 5000);
         }
-        setInterval(createSnowflake, 100);
+
         window.onload = function() {
             fetchFunFact();
             updateVisitorCount();
-         };
+            setInterval(createSnowflake, 100);
+        };
     </script>
 </body>
 </html>
