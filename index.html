@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Fun Facts | Interesting Trivia & Cool Facts</title>
     <meta name="description" content="Discover fascinating daily fun facts, mind-blowing trivia, and interesting knowledge about science, history, animals, space, and more! Explore weird, funny, and unbelievable facts that will surprise and entertain you every day. Stay curious and learn something new with our amazing collection of facts, Discover amazing daily fun facts, interesting trivia, and mind-blowing facts that will surprise you every day!">
-">
     <meta name="keywords" content="fun facts, daily fun facts, interesting trivia, cool facts, random facts, amazing facts, weird facts, mind-blowing facts, science facts, history facts, animal facts, space facts, unbelievable facts, fun trivia, general knowledge facts, educational facts, did you know facts, fascinating trivia, shocking facts, little-known facts, viral facts, funny facts, smart facts, unique facts, curious facts, trending trivia, must-know facts, awesome fun facts, entertaining facts, true facts, knowledge boosters">
     <meta name="author" content="Daily Fun Facts & Interesting Trivia">
     <meta property="og:title" content="Daily Fun Facts | Interesting Trivia & Cool Facts">
@@ -138,7 +137,16 @@
         function shareOnWhatsApp() {
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(document.getElementById("funFact").innerText)}`, '_blank');
         }
-        window.onload = fetchFunFact;
+        function updateVisitorCount() {
+            let count = localStorage.getItem("visitorCount") || 0;
+            count = parseInt(count) + 1;
+            localStorage.setItem("visitorCount", count);
+            document.getElementById("visitorCount").innerText = "Visitors: " + count;
+        }
+        window.onload = function() {
+            fetchFunFact();
+            updateVisitorCount();
+         };
     </script>
 </body>
 </html>
